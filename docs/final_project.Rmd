@@ -1,0 +1,28 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+  library(tinytex)
+  library(MASS)
+  library(lme4)
+  library(car)
+```
+
+# Temp
+
+## Benthic ~ Buoy 
+
+Backfill missing data between 1982 to 1993
+
+## Decompose Data
+
+Look for seasonality and trend over time
+
+# Fish
+
+## Fish Diversity ~ Visibility
+
+Look for a relationship between fish counts or diversity and visibility. 
