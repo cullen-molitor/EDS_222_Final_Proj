@@ -1,1 +1,5 @@
-# EDS_222_Final_Proj
+# EDS 222 Final Proj
+
+Cullen Molitor
+
+## Modeling species abundance folowwing ENSO anomalies.

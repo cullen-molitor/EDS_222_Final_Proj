@@ -1,28 +1,205 @@
 ---
-title: "Untitled"
-output: html_document
+title: "ENSO"
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-  library(tinytex)
-  library(MASS)
-  library(lme4)
-  library(car)
+library(tidyverse)
+library(here)
+library(broom)
+library(tsibble)
+library(dLagM)
+library(arrow)
+library(lubridate)
 ```
 
-# Temp
+```{r data, include=FALSE}
+oni_yearly <- read.table( # Read in  ONI to be added to all data
+  "https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/detrend.nino34.ascii.txt",
+  header = T) %>%
+  dplyr::mutate(Date = as.Date(ISOdate(YR, MON, 1)),
+                DateStart = as.Date(ISOdate(YR, MON, 1)),
+                DateEnd = ceiling_date(DateStart, "month")) %>%
+  dplyr::rename(SST_Anom = ANOM,
+                Month = MON,
+                SurveyYear = YR) %>% 
+  dplyr::select(SurveyYear, Month, Date, DateStart, DateEnd, SST_Anom) %>% 
+  dplyr::group_by(SurveyYear) %>% 
+  dplyr::summarise(SST_Anom = mean(SST_Anom)) %>% 
+  dplyr::mutate(SST_Anom_1 = lag(SST_Anom, n = 1),
+                SST_Anom_2 = lag(SST_Anom, n = 2),
+                SST_Anom_3 = lag(SST_Anom, n = 3),
+                SST_Anom_4 = lag(SST_Anom, n = 4),
+                SST_Anom_5 = lag(SST_Anom, n = 5))
 
-## Benthic ~ Buoy 
+Species_Info <- readr::read_csv(
+  here::here(
+    "data", "Species_Complete.csv"
+  ))
 
-Backfill missing data between 1982 to 1993
+Site_Info <- readr::read_csv(
+  here::here(
+    "data", "Site_Info.csv"
+  ))
 
-## Decompose Data
+```
 
-Look for seasonality and trend over time
+```{r}
+density <- arrow::read_feather(here::here("data", "Density.feather")) %>%
+  dplyr::filter(!CommonName %in% c(
+    "soupfin shark", 'rockfish spp.', "barred sand bass",
+    'black croaker', 'broadnose sevengill shark', 
+    'calico rockfish, juvenile', 'clingfish spp.', 
+    "copper rockfish, all", "crevice kelpfish", 
+    'canary rockfish, juvenile', 'cusk eel spp.',
+    "finescale triggerfish, adult", "goby spp.",
+    "gunnel spp.", "halfbanded rockfish, adult",
+    "horn shark", "kelp greenling, adult", 
+    "kelp greenling, female", "kelp greenling, juvenile",
+    "kelp greenling, male", "leopard shark",
+    "monkeyface prickleback", "northern anchovy", "northern ronquil",
+    "ocean sunfish", "onespot fringehead", "orangethroat pikeblenny", 
+    "Pacific bonito", "plain cardinalfish", "plainfin midshipman", 
+    "prickleback spp.", "rockfish spp., adult", "rosy rockfish, juvenile", 
+    "sailfin sculpin", "sanddab spp.", "sarcastic fringehead", 
+    "	bocaccio, adult", "brown rockfish, juvenile", "California halibut",
+    "halfmoon, juvenile", "splitnose rockfish, juvenile", "spotfin sculpin", 
+    "squarespot rockfish, juvenile", "swallowtail damselfish", "thornback ray",
+    "top smelt, juvenile", "walleye surfperch", "white abalone",
+    "white seabass", "zebra perch", "sargo", "surfperch spp.",
+    "tubesnout, juvenile", "wakame, adult", "wakame, juvenile",
+    "wolf eel", "zebra goby", "baitfish unidentified",
+    "bat ray", "spotted kelpfish", "garibaldi, subadult")) %>% 
+  dplyr::left_join(oni_yearly)
+```
 
-# Fish
+```{r}
+Results <- density %>% 
+  dplyr::group_by(CommonName) %>% 
+  dplyr::summarise(
+    generics::tidy(
+      stats::lm(Mean_Density ~ SST_Anom)
+      )) %>% 
+  tidyr::pivot_wider(names_from = term, values_from = estimate) %>% 
+  dplyr::mutate(beta_0 = lag(`(Intercept)`, n = 1)) %>% 
+  tidyr::drop_na(SST_Anom, p.value) %>%
+  dplyr::filter(p.value <= .05) %>%
+  dplyr::arrange(p.value) %>%
+  dplyr::mutate(statistic = round(statistic, 3),
+                p.value = round(p.value, 3),
+                p.value = ifelse(p.value < 0.001, "< 0.001", as.character(p.value)),
+                `Predictor Variable` = "SST_Anom") %>% 
+  dplyr::rename(`Response Variable` = CommonName, 
+                beta_1 = SST_Anom) %>% 
+  dplyr::select(`Response Variable`, `Predictor Variable`,
+                beta_0, beta_1, std.error, statistic, p.value)
+```
 
-## Fish Diversity ~ Visibility
 
-Look for a relationship between fish counts or diversity and visibility. 
+```{r}
+for (sp in unique(Results$`Response Variable`)) {
+  p <- density %>% 
+    filter(CommonName == sp) %>% 
+    ggplot() +
+    # geom_point() +
+    geom_smooth(aes(y = Mean_Density, x = SST_Anom), method = lm, formula = "y~x", color = "red") +
+    geom_smooth(aes(y = Mean_Density, x = SST_Anom_1), method = lm, formula = "y~x", color = "blue") +
+    geom_smooth(aes(y = Mean_Density, x = SST_Anom_2), method = lm, formula = "y~x", color = "green") +
+    labs(title = sp) +
+    theme_classic()
+  
+  print(p)
+}
+```
+
+```{r}
+Results_lag_5 <- density %>% 
+  dplyr::group_by(CommonName) %>% 
+  dplyr::summarise(
+    generics::tidy(
+      stats::lm(Mean_Density ~ SST_Anom + SST_Anom_1 + SST_Anom_2 + SST_Anom_3 + SST_Anom_4 + SST_Anom_5)
+      )) %>% 
+  tidyr::drop_na(p.value) %>%
+  dplyr::filter(p.value <= .05, term != "(Intercept)") %>%
+  dplyr::arrange(estimate) %>%
+  # dplyr::arrange(p.value) %>%
+  dplyr::mutate(statistic = round(statistic, 3),
+                p.value = round(p.value, 3),
+                p.value = ifelse(p.value < 0.001, "< 0.001", as.character(p.value))) 
+```
+
+
+```{r}
+Results_lag <- density %>% 
+  dplyr::group_by(CommonName) %>% 
+  dplyr::summarise(
+    generics::tidy(
+      stats::lm(Mean_Density ~ SST_Anom + SST_Anom_1 + SST_Anom_2 + SST_Anom_3 + SST_Anom_4 + SST_Anom_5)
+      )) %>% 
+  tidyr::drop_na(p.value) %>%
+  dplyr::filter(term != "(Intercept)")
+```
+
+
+```{r}
+for (sp in unique(Results_lag_5$CommonName)) {
+  p <- Results_lag %>% 
+    filter(CommonName == sp) %>% 
+    ggplot(aes(x = term, y = estimate, color = CommonName, group = CommonName)) +
+    geom_line(show.legend = F) +
+    labs(title = sp) +
+    theme_classic()
+  
+  print(p)
+}
+
+```
+
+
+```{r}
+plt <- density %>% 
+  filter(CommonName %in% unique(Results$`Response Variable`))
+
+ggplot(data = plt, aes(y = Mean_Density, x = SST_Anom, color = CommonName)) +
+  geom_smooth(method = lm, formula = "y~x", show.legend = F, se = FALSE) 
+```
+
+
+
+
+```{r}
+for (sp in unique(Results_lag$`Response Variable`)) {
+  p <- density %>% 
+    filter(CommonName == sp) %>% 
+    ggplot(aes(y = Mean_Density, x = SST_Anom)) +
+    geom_point() +
+    geom_smooth(method = lm, formula = "y~x") +
+    labs(title = sp) +
+    theme_classic()
+  
+  print(p)
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

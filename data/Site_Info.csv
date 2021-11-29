@@ -1,0 +1,34 @@
+SiteNumber,IslandCode,IslandName,SiteCode,SiteName,Isl_SiteName,Reference,ReserveStatus,ReserveType,ReserveYear,Old_New,ReserveName,MeanDepth,ARMs,Bath,MPA_Code,Cobble,Rock,Sand
+1,SM,San Miguel Island,WL,Wyckoff Ledge,SM - Wyckoff Ledge,FALSE,Outside,Outside,Outside,Outside,NA,43.27,FALSE,FALSE,NA,3.69,73.48,22.07
+2,SM,San Miguel Island,HR,Hare Rock,SM - Hare Rock,FALSE,Inside,SMR,2003,New SMR,Harris Pont SMR,20.5,FALSE,FALSE,NA,14.67,80.22,4.91
+3,SR,Santa Rosa Island,JLNO,Johnson's Lee North,SR - Johnson's Lee North,TRUE,Outside,Outside,Outside,Outside,NA,33.18,TRUE,FALSE,SPSMR,2.46,93.81,3.66
+4,SR,Santa Rosa Island,JLSO,Johnson's Lee South,SR - Johnson's Lee South,TRUE,Outside,Outside,Outside,Outside,NA,46.72,TRUE,FALSE,SPSMR,2.74,79.23,17.99
+5,SR,Santa Rosa Island,RR,Rodes Reef,SR - Rodes Reef,FALSE,Outside,Outside,Outside,Outside,NA,44.77,FALSE,FALSE,NA,11.8,82.55,5.34
+6,SC,Santa Cruz Island,GI,Gull Island South,SC - Gull Island South,FALSE,Inside,SMR,2003,New SMR,Gull Island SMR,52,TRUE,FALSE,NA,2.2,94.36,3.37
+7,SC,Santa Cruz Island,FH,Fry's Harbor,SC - Fry's Harbor,FALSE,Outside,Outside,Outside,Outside,NA,40.82,TRUE,FALSE,NA,11.15,82.14,4.57
+8,SC,Santa Cruz Island,PB,Pelican Bay,SC - Pelican Bay,FALSE,Outside,Outside,Outside,Outside,NA,21.33,TRUE,FALSE,NA,16.2,55.34,28.08
+9,SC,Santa Cruz Island,SA,Scorpion Anchorage,SC - Scorpion Anchorage,TRUE,Inside,SMR,2003,New SMR,Scorpion SMR,15.45,TRUE,TRUE,SSMR,4.79,82.45,12.67
+10,SC,Santa Cruz Island,YB,Yellow Banks,SC - Yellow Banks,FALSE,Outside,Outside,Outside,Outside,NA,50.67,TRUE,FALSE,NA,15.62,75.6,8.78
+11,AN,Anacapa Island,AR,Admiral's Reef,AN - Admiral's Reef,TRUE,Outside,Outside,Outside,Outside,NA,44.36,TRUE,TRUE,ANISMR,7.21,84.42,8.49
+12,AN,Anacapa Island,CC,Cathedral Cove,AN - Cathedral Cove,TRUE,Inside,SMR,1978,Old SMR,Anacapa Island SMR,26.45,TRUE,TRUE,ANISMR,20.16,65.47,14.36
+13,AN,Anacapa Island,LC,Landing Cove,AN - Landing Cove,TRUE,Inside,SMR,1978,Old SMR,Anacapa Island SMR,24.25,TRUE,TRUE,ANISMR,18.56,71.89,9.45
+14,SB,Santa Barbara Island,SESL,SE Sea Lion Rookery,SB - SE Sea Lion Rookery,TRUE,Inside,SMR,2003,New SMR,Santa Barbara Island SMR,43.09,FALSE,FALSE,SBISMR,6.03,83.29,10.5
+15,SB,Santa Barbara Island,AP,Arch Point,SB - Arch Point,TRUE,Outside,Outside,Outside,Outside,NA,24.82,FALSE,FALSE,SBISMR,12.8,83.56,3.61
+16,SB,Santa Barbara Island,CAT,Cat Canyon,SB - Cat Canyon,TRUE,Outside,Outside,Outside,Outside,NA,25.91,FALSE,FALSE,SBISMR,3.5,87.8,8.7
+21,SM,San Miguel Island,MM,Miracle Mile,SM - Miracle Mile,FALSE,Outside,Outside,Outside,Outside,NA,27.55,TRUE,FALSE,NA,7.04,87.24,5.72
+22,SR,Santa Rosa Island,CP,Cluster Point,SR - Cluster Point,TRUE,Outside,Outside,Outside,Outside,NA,45.33,FALSE,FALSE,SPSMR,7.84,85.62,6.53
+23,SR,Santa Rosa Island,TC,Trancion Canyon,SR - Trancion Canyon,TRUE,Inside,SMR,2003,New SMR,South Point SMR,42.18,FALSE,FALSE,SPSMR,2.19,85.79,12.02
+24,SR,Santa Rosa Island,CSAW,Chickasaw,SR - Chickasaw,TRUE,Inside,SMR,2003,New SMR,South Point SMR,36.6,FALSE,FALSE,SPSMR,0.74,84.52,14.73
+25,SR,Santa Rosa Island,SP,South Point,SR - South Point,TRUE,Inside,SMR,2003,New SMR,South Point SMR,41.09,FALSE,FALSE,SPSMR,0.87,81.76,17.38
+26,SC,Santa Cruz Island,DPM,Devil's Peak Member,SC - Devil's Peak Member,TRUE,Outside,Outside,Outside,Outside,NA,38.45,FALSE,TRUE,SSMR,4.09,91.81,4.1
+27,SC,Santa Cruz Island,PP,Potato Pasture,SC - Potato Pasture,TRUE,Inside,SMR,2003,New SMR,Scorpion SMR,37,FALSE,TRUE,SSMR,12.07,84.27,3.67
+28,SC,Santa Cruz Island,CVP,Cavern Point,SC - Cavern Point,TRUE,Inside,SMR,2003,New SMR,Scorpion SMR,40,FALSE,TRUE,SSMR,8.29,87.57,4.14
+29,SC,Santa Cruz Island,LS,Little Scorpion,SC - Little Scorpion,TRUE,Outside,Outside,Outside,Outside,NA,37.82,FALSE,TRUE,SSMR,12.63,83.2,4.17
+30,SC,Santa Cruz Island,PRF,Pedro Reef,SC - Pedro Reef,TRUE,Outside,Outside,Outside,Outside,NA,29.73,FALSE,TRUE,SSMR,2.62,85.43,11.94
+31,AN,Anacapa Island,KH,Keyhole,AN - Keyhole,FALSE,Inside,SMCA,2003,New SMCA,NA,29.64,FALSE,TRUE,NA,12.7,75.96,11.34
+32,AN,Anacapa Island,EFC,East Fish Camp,AN - East Fish Camp,TRUE,Outside,Outside,Outside,Outside,NA,38.09,FALSE,TRUE,ANISMR,3.88,88.41,7.71
+33,AN,Anacapa Island,BSBR,Black Sea Bass Reef,AN - Black Sea Bass Reef,TRUE,Inside,SMR,2003,New SMR,Anacapa Island SMR,53.18,FALSE,TRUE,ANISMR,10.84,85.91,3.24
+34,AN,Anacapa Island,LH,Lighthouse,AN - Lighthouse,TRUE,Outside,Outside,Outside,Outside,NA,27.91,FALSE,TRUE,ANISMR,9.07,73.39,17.55
+35,SB,Santa Barbara Island,WA,Webster's Arch,SB - Webster's Arch,TRUE,Outside,Outside,Outside,Outside,NA,48.18,FALSE,FALSE,SBISMR,4,95.71,0.29
+36,SB,Santa Barbara Island,GC,Graveyard Canyon,SB - Graveyard Canyon,TRUE,Inside,SMR,2003,New SMR,Santa Barbara Island SMR,38.14,FALSE,FALSE,SBISMR,4.06,59.91,36.03
+37,SB,Santa Barbara Island,SER,Southeast Reef,SB - Southeast Reef,TRUE,Inside,SMR,2003,New SMR,Santa Barbara Island SMR,38.73,TRUE,FALSE,SBISMR,5.99,90.23,3.78
