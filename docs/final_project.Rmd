@@ -77,53 +77,19 @@ density <- arrow::read_feather(here::here("data", "Density.feather")) %>%
 ```
 
 ```{r}
-Results <- density %>% 
+Results_lag <- density %>% 
   dplyr::group_by(CommonName) %>% 
   dplyr::summarise(
     generics::tidy(
-      stats::lm(Mean_Density ~ SST_Anom)
-      )) %>% 
-  tidyr::pivot_wider(names_from = term, values_from = estimate) %>% 
-  dplyr::mutate(beta_0 = lag(`(Intercept)`, n = 1)) %>% 
-  tidyr::drop_na(SST_Anom, p.value) %>%
-  dplyr::filter(p.value <= .05) %>%
-  dplyr::arrange(p.value) %>%
-  dplyr::mutate(statistic = round(statistic, 3),
-                p.value = round(p.value, 3),
-                p.value = ifelse(p.value < 0.001, "< 0.001", as.character(p.value)),
-                `Predictor Variable` = "SST_Anom") %>% 
-  dplyr::rename(`Response Variable` = CommonName, 
-                beta_1 = SST_Anom) %>% 
-  dplyr::select(`Response Variable`, `Predictor Variable`,
-                beta_0, beta_1, std.error, statistic, p.value)
-```
-
-
-```{r}
-for (sp in unique(Results$`Response Variable`)) {
-  p <- density %>% 
-    filter(CommonName == sp) %>% 
-    ggplot() +
-    # geom_point() +
-    geom_smooth(aes(y = Mean_Density, x = SST_Anom), method = lm, formula = "y~x", color = "red") +
-    geom_smooth(aes(y = Mean_Density, x = SST_Anom_1), method = lm, formula = "y~x", color = "blue") +
-    geom_smooth(aes(y = Mean_Density, x = SST_Anom_2), method = lm, formula = "y~x", color = "green") +
-    labs(title = sp) +
-    theme_classic()
-  
-  print(p)
-}
-```
-
-```{r}
-Results_lag_5 <- density %>% 
-  dplyr::group_by(CommonName) %>% 
-  dplyr::summarise(
-    generics::tidy(
-      stats::lm(Mean_Density ~ SST_Anom + SST_Anom_1 + SST_Anom_2 + SST_Anom_3 + SST_Anom_4 + SST_Anom_5)
-      )) %>% 
+      stats::lm(
+        Mean_Density ~ SST_Anom + SST_Anom_1 + SST_Anom_2 + SST_Anom_3 + SST_Anom_4 + SST_Anom_5
+        ))) %>% 
   tidyr::drop_na(p.value) %>%
-  dplyr::filter(p.value <= .05, term != "(Intercept)") %>%
+  dplyr::filter(term != "(Intercept)") %>% 
+  dplyr::mutate(significant = ifelse(p.value <= .05, "yes", "no"))
+
+Results_filtered <- Results_lag %>%
+  dplyr::filter(p.value <= .05) %>% 
   dplyr::arrange(estimate) %>%
   # dplyr::arrange(p.value) %>%
   dplyr::mutate(statistic = round(statistic, 3),
@@ -131,58 +97,41 @@ Results_lag_5 <- density %>%
                 p.value = ifelse(p.value < 0.001, "< 0.001", as.character(p.value))) 
 ```
 
-
 ```{r}
-Results_lag <- density %>% 
-  dplyr::group_by(CommonName) %>% 
-  dplyr::summarise(
-    generics::tidy(
-      stats::lm(Mean_Density ~ SST_Anom + SST_Anom_1 + SST_Anom_2 + SST_Anom_3 + SST_Anom_4 + SST_Anom_5)
-      )) %>% 
-  tidyr::drop_na(p.value) %>%
-  dplyr::filter(term != "(Intercept)")
-```
-
-
-```{r}
-for (sp in unique(Results_lag_5$CommonName)) {
-  p <- Results_lag %>% 
-    filter(CommonName == sp) %>% 
-    ggplot(aes(x = term, y = estimate, color = CommonName, group = CommonName)) +
-    geom_line(show.legend = F) +
-    labs(title = sp) +
-    theme_classic()
-  
-  print(p)
-}
-
-```
-
-
-```{r}
-plt <- density %>% 
-  filter(CommonName %in% unique(Results$`Response Variable`))
-
-ggplot(data = plt, aes(y = Mean_Density, x = SST_Anom, color = CommonName)) +
-  geom_smooth(method = lm, formula = "y~x", show.legend = F, se = FALSE) 
-```
-
-
-
-
-```{r}
-for (sp in unique(Results_lag$`Response Variable`)) {
+for (sp in unique(Results_filtered$CommonName)) {
   p <- density %>% 
     filter(CommonName == sp) %>% 
-    ggplot(aes(y = Mean_Density, x = SST_Anom)) +
-    geom_point() +
-    geom_smooth(method = lm, formula = "y~x") +
+    ggplot(aes(y = Mean_Density)) +
+    # geom_point() +
+    geom_smooth(aes(x = SST_Anom), se = F, method = lm, formula = "y~x",color = "red") +
+    geom_smooth(aes(x = SST_Anom_1), se = F, method = lm, formula = "y~x", color = "blue") +
+    geom_smooth(aes(x = SST_Anom_2), se = F, method = lm, formula = "y~x", color = "green") +
+    geom_smooth(aes(x = SST_Anom_3), se = F, method = lm, formula = "y~x", color = "black") +
+    geom_smooth(aes(x = SST_Anom_4), se = F, method = lm, formula = "y~x", color = "purple") +
     labs(title = sp) +
     theme_classic()
   
   print(p)
 }
 ```
+
+
+```{r}
+for (sp in unique(Results_filtered$CommonName)) {
+  p <- Results_lag %>% 
+    filter(CommonName == sp) %>% 
+    ggplot() +
+    geom_line(aes(x = term, y = estimate, color = CommonName, group = CommonName), show.legend = F) +
+    geom_point(aes(x = term, y = estimate, shape = significant), size = 4) +
+    labs(title = sp) +
+    theme_classic()
+  
+  print(p)
+}
+
+```
+
+
 
 
 
