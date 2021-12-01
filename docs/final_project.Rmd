@@ -1,8 +1,8 @@
 ---
 title: "ENSO"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -15,6 +15,42 @@ library(dLagM)
 library(arrow)
 library(lubridate)
 ```
+
+# Motivation
+
+- Motivate your question. Why is this important? Is there existing evidence on this 
+question? If so, why is it inconclusive? If not, why not? 
+
+California's Northern Channel Islands sit at the transition between to biogeographic provinces, the Oregonian to the north and the Californian to the south. San Miguel and Santa Rosa Islands have species representative of the colder Oregonian province while Anacapa and Santa Barbara Islands sit firmly in the warmer Californian province. Santa Cruz Island lies in the transition zone with the western end of the island favoring Oregonian species and the eastern end favoring Californian species. This makes the Northern Channel Islands a unique place to study how species distribution responds to sea temperatures.
+
+The impetus of this analysis is to investigate which species are sensitive to either warm-water or cold-water events. Using each species mean density, collected over 38 years of Kelp Forest Monitoring (KFM) at Channel Islands National Park, we can see the trends observed over multiple El Nino (warm-water) and La Nina (cold-water) events. During and in the years following these events, recruitment of certain species either increases or decreases. 
+
+
+
+
+- Describe your data. Where did you access it? What are its spatial and temporal features? 
+What are its limitations? What do you know about the sampling strategy and what biases 
+that may introduce? If helpful, you can use a histogram, scatterplot, or summary statistics 
+table to describe your data. 
+
+- Clearly describe your analysis plan. What is your analysis plan? Why did you choose 
+this analysis, given your data and question? What are the limitations?  
+
+- Summarize your results visually and in words. Show us your results in figure(s) and/or 
+table(s) that are carefully labeled and captioned. Describe in the text (and orally when 
+presenting) what you found, and how these results either do or do not help you answer 
+your question.  
+
+- What might you do next? One short analysis cannot fully answer an interesting scientific 
+question. If you had time to collect more data or conduct more analysis, what would help 
+you answer this question better?  
+
+
+
+
+
+- Look at distribution of cumulative effects (maybe overlay significant effects)
+
 
 ```{r data, include=FALSE}
 oni_yearly <- read.table( # Read in  ONI to be added to all data
@@ -49,42 +85,50 @@ Site_Info <- readr::read_csv(
 
 ```{r}
 density <- arrow::read_feather(here::here("data", "Density.feather")) %>%
-  dplyr::filter(!CommonName %in% c(
-    "soupfin shark", 'rockfish spp.', "barred sand bass",
-    'black croaker', 'broadnose sevengill shark', 
-    'calico rockfish, juvenile', 'clingfish spp.', 
-    "copper rockfish, all", "crevice kelpfish", 
-    'canary rockfish, juvenile', 'cusk eel spp.',
-    "finescale triggerfish, adult", "goby spp.",
-    "gunnel spp.", "halfbanded rockfish, adult",
-    "horn shark", "kelp greenling, adult", 
-    "kelp greenling, female", "kelp greenling, juvenile",
-    "kelp greenling, male", "leopard shark",
-    "monkeyface prickleback", "northern anchovy", "northern ronquil",
-    "ocean sunfish", "onespot fringehead", "orangethroat pikeblenny", 
-    "Pacific bonito", "plain cardinalfish", "plainfin midshipman", 
-    "prickleback spp.", "rockfish spp., adult", "rosy rockfish, juvenile", 
-    "sailfin sculpin", "sanddab spp.", "sarcastic fringehead", 
-    "	bocaccio, adult", "brown rockfish, juvenile", "California halibut",
-    "halfmoon, juvenile", "splitnose rockfish, juvenile", "spotfin sculpin", 
-    "squarespot rockfish, juvenile", "swallowtail damselfish", "thornback ray",
-    "top smelt, juvenile", "walleye surfperch", "white abalone",
-    "white seabass", "zebra perch", "sargo", "surfperch spp.",
-    "tubesnout, juvenile", "wakame, adult", "wakame, juvenile",
-    "wolf eel", "zebra goby", "baitfish unidentified",
-    "bat ray", "spotted kelpfish", "garibaldi, subadult")) %>% 
+  dplyr::filter(Classification != "Fish",
+                !CommonName %in% c("wakame, adult", "wakame, juvenile", "white abalone")) %>% 
+  # dplyr::filter(!CommonName %in% c(
+  #   "soupfin shark", 'rockfish spp.', "barred sand bass",
+  #   'black croaker', 'broadnose sevengill shark', 
+  #   'calico rockfish, juvenile', 'clingfish spp.', 
+  #   "copper rockfish, all", "crevice kelpfish", 
+  #   'canary rockfish, juvenile', 'cusk eel spp.',
+  #   "finescale triggerfish, adult", "goby spp.",
+  #   "gunnel spp.", "halfbanded rockfish, adult",
+  #   "horn shark", "kelp greenling, adult", 
+  #   "kelp greenling, female", "kelp greenling, juvenile",
+  #   "kelp greenling, male", "leopard shark",
+  #   "monkeyface prickleback", "northern anchovy", "northern ronquil",
+  #   "ocean sunfish", "onespot fringehead", "orangethroat pikeblenny", 
+  #   "Pacific bonito", "plain cardinalfish", "plainfin midshipman", 
+  #   "prickleback spp.", "rockfish spp., adult", "rosy rockfish, juvenile", 
+  #   "sailfin sculpin", "sanddab spp.", "sarcastic fringehead", 
+  #   "bocaccio, adult", "brown rockfish, juvenile", "California halibut",
+  #   "halfmoon, juvenile", "splitnose rockfish, juvenile", "spotfin sculpin", 
+  #   "squarespot rockfish, juvenile", "swallowtail damselfish", "thornback ray",
+  #   "top smelt, juvenile", "walleye surfperch", "white abalone",
+  #   "white seabass", "zebra perch", "sargo", "surfperch spp.",
+  #   "tubesnout, juvenile", "wakame, adult", "wakame, juvenile",
+  #   "wolf eel", "zebra goby", "baitfish unidentified",
+  #   "bat ray", "spotted kelpfish", "garibaldi, subadult",
+  #   "ronquil spp.", "sharpnose/white surfperch", "Pacific sardine",
+  #   "cabezon, juvenile", "California scorpionfish, juvenile", "halfbanded rockfish, juvenile",    
+  #   "ocean whitefish, juvenile", "Pacific mackerel", "scalyhead sculpin",                
+  #   "sharpnose surfperch", "stripedfin ronquil", "stripetail rockfish, juvenile",   
+  #   "surfperch spp., adult", "surfperch spp., juvenile", "top smelt, adult",                 
+  #   "yellowfin fringehead")) %>% 
   dplyr::left_join(oni_yearly)
 ```
 
 ```{r}
 Results_lag <- density %>% 
-  dplyr::group_by(CommonName) %>% 
+  dplyr::group_by(ScientificName) %>% 
   dplyr::summarise(
     generics::tidy(
       stats::lm(
         Mean_Density ~ SST_Anom + SST_Anom_1 + SST_Anom_2 + SST_Anom_3 + SST_Anom_4 + SST_Anom_5
         ))) %>% 
-  tidyr::drop_na(p.value) %>%
+  # tidyr::drop_na(p.value) %>%
   dplyr::filter(term != "(Intercept)") %>% 
   dplyr::mutate(significant = ifelse(p.value <= .05, "yes", "no"))
 
@@ -98,36 +142,63 @@ Results_filtered <- Results_lag %>%
 ```
 
 ```{r}
-for (sp in unique(Results_filtered$CommonName)) {
-  p <- density %>% 
-    filter(CommonName == sp) %>% 
-    ggplot(aes(y = Mean_Density)) +
-    # geom_point() +
-    geom_smooth(aes(x = SST_Anom), se = F, method = lm, formula = "y~x",color = "red") +
-    geom_smooth(aes(x = SST_Anom_1), se = F, method = lm, formula = "y~x", color = "blue") +
-    geom_smooth(aes(x = SST_Anom_2), se = F, method = lm, formula = "y~x", color = "green") +
-    geom_smooth(aes(x = SST_Anom_3), se = F, method = lm, formula = "y~x", color = "black") +
-    geom_smooth(aes(x = SST_Anom_4), se = F, method = lm, formula = "y~x", color = "purple") +
-    labs(title = sp) +
-    theme_classic()
+prop <- Results_lag %>% 
+  group_by(ScientificName) %>%
+  summarise(est_sum =  sum(estimate)) 
   
-  print(p)
-}
+
+total <- length(Results_lag$ScientificName)
+warm <- Results_lag %>%
+  filter(estimate > 0) %>% 
+  # distinct(CommonName) %>% 
+  pull(ScientificName) %>% 
+  length()
+cold <- Results_lag %>%
+  filter(estimate < 0) %>% 
+  # distinct(CommonName) %>% 
+  pull(ScientificName) %>% 
+  length()
 ```
 
 
 ```{r}
-for (sp in unique(Results_filtered$CommonName)) {
-  p <- Results_lag %>% 
-    filter(CommonName == sp) %>% 
-    ggplot() +
-    geom_line(aes(x = term, y = estimate, color = CommonName, group = CommonName), show.legend = F) +
-    geom_point(aes(x = term, y = estimate, shape = significant), size = 4) +
-    labs(title = sp) +
-    theme_classic()
-  
-  print(p)
-}
+ggplot(data = prop, aes(x = est_sum)) +
+  geom_density() +
+  xlim(c(-2, 2))
+```
+
+
+```{r}
+# for (sp in unique(Results_filtered$CommonName)) {
+#   p <- density %>% 
+#     filter(CommonName == sp) %>% 
+#     ggplot(aes(y = Mean_Density)) +
+#     # geom_point() +
+#     geom_smooth(aes(x = SST_Anom), se = F, method = lm, formula = "y~x",color = "red") +
+#     geom_smooth(aes(x = SST_Anom_1), se = F, method = lm, formula = "y~x", color = "blue") +
+#     geom_smooth(aes(x = SST_Anom_2), se = F, method = lm, formula = "y~x", color = "green") +
+#     geom_smooth(aes(x = SST_Anom_3), se = F, method = lm, formula = "y~x", color = "black") +
+#     geom_smooth(aes(x = SST_Anom_4), se = F, method = lm, formula = "y~x", color = "purple") +
+#     labs(title = sp) +
+#     theme_classic()
+#   
+#   print(p)
+# }
+```
+
+
+```{r}
+# for (sp in unique(Results_filtered$CommonName)) {
+#   p <- Results_lag %>% 
+#     filter(CommonName == sp) %>% 
+#     ggplot() +
+#     geom_line(aes(x = term, y = estimate, color = CommonName, group = CommonName), show.legend = F) +
+#     geom_point(aes(x = term, y = estimate, shape = significant), size = 4) +
+#     labs(title = sp) +
+#     theme_classic()
+#   
+#   print(p)
+# }
 
 ```
 
@@ -137,7 +208,9 @@ for (sp in unique(Results_filtered$CommonName)) {
 
 
 
+# Literature Cited
 
+Costello, M.J., Tsai, P., Wong, P.S. et al. Marine biogeographic realms and species endemicity. Nat Commun 8, 1057 (2017). https://doi.org/10.1038/s41467-017-01121-2
 
 
 
